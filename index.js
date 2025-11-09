@@ -23,6 +23,12 @@ class ColoredCircle extends Circle {
     }
 }
 const coloredCircleBuilder = () => new ColoredCircle();
+// return type is covariance i.e. it is safe to return subtypes
+const shapeBuilder = coloredCircleBuilder;
+// here we just assigned a more specific type (ColoredCircle) in return position
+// where a more generic type (Shape) was expected
 const coloredCircle = coloredCircleBuilder();
-console.log(coloredCircle);
+const shape = shapeBuilder();
+console.log({ coloredCircle });
+console.log({ shape });
 //# sourceMappingURL=index.js.map
