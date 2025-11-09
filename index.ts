@@ -132,4 +132,37 @@ const coloredCircleConsumer: ColoredCircleConsumer = shapeConsumer;
 	
 	// lol? 🤯🤯🤯
 	acceptsNothing = acceptsEverything;
+
+	// well of course this is because of contravariance in function parameters
 }
+
+// let's push further
+// do you see what's coming?
+const map = new Map<number, never>();
+
+async function proc(id: number, cb: (x: never) => Promise<void>, map: Map<number, never>): Promise<void> {
+	const value = map.get(id);	
+	if (!value) return;
+	await cb(value);	
+}
+
+async function stringCb(x: string): Promise<void> {
+	console.log(x);
+}
+
+async function anythingCb(anything: unknown): Promise<void> {
+	console.log(anything);
+}
+
+function setValue<T>(map: Map<number, T>, id: number, value: T): void {
+	map.set(id, value);
+}
+
+
+setValue(map, 123, "456");
+proc(123, stringCb, map);
+proc(123, anythingCb, map);
+
+// now covariant leaks into position where you don't exepct it,
+// naturally because it interacts with parameter position contravariant in assignment
+// so here again in Map<number, never>, never actually the top type, the most open type

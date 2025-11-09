@@ -91,6 +91,7 @@ const coloredCircleConsumer = shapeConsumer;
         // thus this code is unreachable
         console.log(mostSpecific);
     };
+    // @ts-expect-error: string is not specific enough
     acceptsNothing("string");
     const acceptsEverything = (mostGeneric) => {
         // in javascript everything is printable
@@ -98,5 +99,30 @@ const coloredCircleConsumer = shapeConsumer;
     };
     // lol? 🤯🤯🤯
     acceptsNothing = acceptsEverything;
+    // well of course this is because of contravariance in function parameters
 }
+// let's push further
+// do you see what's coming?
+const map = new Map();
+async function proc(id, cb, map) {
+    const value = map.get(id);
+    if (!value)
+        return;
+    await cb(value);
+}
+async function stringCb(x) {
+    console.log(x);
+}
+async function anythingCb(anything) {
+    console.log(anything);
+}
+function setValue(map, id, value) {
+    map.set(id, value);
+}
+setValue(map, 123, "456");
+proc(123, stringCb, map);
+proc(123, anythingCb, map);
+// now covariant leaks into position where you don't exepct it,
+// naturally because it interacts with parameter position contravariant in assignment
+// so here again in Map<number, never>, never actually the top type, the most open type
 //# sourceMappingURL=index.js.map
