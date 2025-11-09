@@ -1,6 +1,7 @@
 // https://www.youtube.com/watch?v=zmvznP1lv3E
 // https://www.youtube.com/watch?v=FdFBYUQCuHQ
 
+// more generic
 class Shape {
 	x: number;
 	constructor(x?: number) {
@@ -8,6 +9,7 @@ class Shape {
 	}
 }
 
+// reference type
 class Circle extends Shape {
 	radius: number;
 	constructor(radius?: number, x?: number) {
@@ -16,6 +18,7 @@ class Circle extends Shape {
 	}
 }
 
+// more specific
 class ColoredCircle extends Circle {
 	color: string;
 	constructor(color?: string, radius?: number, x?: number) {
@@ -33,17 +36,31 @@ class ColoredCircle extends Circle {
 // an object may be replaced by subobject without breaking the program
 
 type ShapeBuilder = () => Shape;
-type CircleBuilder = () => Circle;
 type ColoredCircleBuilder = () => ColoredCircle;
 
 const coloredCircleBuilder: ColoredCircleBuilder = () => new ColoredCircle();
-// return type is covariance i.e. it is safe to return subtypes
+// return type is covariant i.e. it is safe to return subtypes
 const shapeBuilder: ShapeBuilder = coloredCircleBuilder;
-// here we just assigned a more specific type (ColoredCircle) in return position
+// here we just assigned a more specific type (ColoredCircle) in the return position
 // where a more generic type (Shape) was expected
 
-const coloredCircle = coloredCircleBuilder();
-const shape = shapeBuilder();
+type ShapeConsumer = (shape: Shape) => void;
+type ColoredCircleConsumer = (coloredCircle: ColoredCircle) => void;
 
-console.log({ coloredCircle });
-console.log({ shape });
+const shapeConsumer: ShapeConsumer = (shape: Shape) => {
+	console.log(shape.x);
+	// here we have access to x if we get something more specific
+	// aka more properties of the shape we don't use them anyway
+};
+// parameter type is contravariant i.e. it is safe to pass supertypes
+const coloredCircleConsumer: ColoredCircleConsumer = shapeConsumer;
+// here we just assigned a more generic type (Shape) in the parameter position
+// where a more specific type (ColoredCircle) was expected
+
+const coloredCircle: ColoredCircle = coloredCircleBuilder();
+coloredCircleConsumer(coloredCircle);
+const shape: Shape = shapeBuilder();
+// here we need a generic Shape, but more specific ColoredCircle is still a Shape
+console.assert((shape as any).color === "black");
+// this shape is a ColoredCircle
+shapeConsumer(shape);
