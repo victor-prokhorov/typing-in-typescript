@@ -3,24 +3,24 @@
 
 class Shape {
 	x: number;
-	constructor(x: number) {
-		this.x = x;
+	constructor(x?: number) {
+		this.x = x || 0;
 	}
 }
 
 class Circle extends Shape {
 	radius: number;
-	constructor(radius: number, x: number) {
+	constructor(radius?: number, x?: number) {
 		super(x);
-		this.radius = radius;
+		this.radius = radius || 10;
 	}
 }
 
 class ColoredCircle extends Circle {
 	color: string;
-	constructor(color: string, radius: number, x: number) {
+	constructor(color?: string, radius?: number, x?: number) {
 		super(radius, x);
-		this.color = color;
+		this.color = color || "black";
 	}
 }
 
@@ -32,5 +32,12 @@ class ColoredCircle extends Circle {
 // https://en.wikipedia.org/wiki/Liskov_substitution_principle
 // an object may be replaced by subobject without breaking the program
 
-const coloredCircle = new ColoredCircle("black", 10, 0);
+type ShapeBuilder = () => Shape;
+type CircleBuilder = () => Circle;
+type ColoredCircleBuilder = () => ColoredCircle;
+
+const coloredCircleBuilder: ColoredCircleBuilder = () => new ColoredCircle();
+
+const coloredCircle = coloredCircleBuilder();
+
 console.log(coloredCircle);

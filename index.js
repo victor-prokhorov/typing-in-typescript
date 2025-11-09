@@ -5,30 +5,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Shape {
     x;
     constructor(x) {
-        this.x = x;
+        this.x = x || 0;
     }
 }
 class Circle extends Shape {
     radius;
     constructor(radius, x) {
         super(x);
-        this.radius = radius;
+        this.radius = radius || 10;
     }
 }
 class ColoredCircle extends Circle {
     color;
     constructor(color, radius, x) {
         super(radius, x);
-        this.color = color;
+        this.color = color || "black";
     }
 }
-// subtype/supertype describe relationsip between types
-// Circle is subtype of Shape i.e. Circle is a more specific Shape
-// ColoredCircle is subtype of Circle
-// Shape is supertype of Circle i.e. Shape is a more generic Circle
-// Circle is supertype of ColoredCircle
-// https://en.wikipedia.org/wiki/Liskov_substitution_principle
-// object may be replaced by sub-object without breaking the program
-const coloredCircle = new ColoredCircle("black", 10, 0);
+const coloredCircleBuilder = () => new ColoredCircle();
+const coloredCircle = coloredCircleBuilder();
 console.log(coloredCircle);
 //# sourceMappingURL=index.js.map
