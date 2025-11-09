@@ -37,11 +37,25 @@ const shapeConsumer = (shape) => {
 const coloredCircleConsumer = shapeConsumer;
 // here we just assigned a more generic type (Shape) in the parameter position
 // where a more specific type (ColoredCircle) was expected
-const coloredCircle = coloredCircleBuilder();
-coloredCircleConsumer(coloredCircle);
-const shape = shapeBuilder();
-// here we need a generic Shape, but more specific ColoredCircle is still a Shape
-console.assert(shape.color === "black");
-// this shape is a ColoredCircle in reality
-shapeConsumer(shape);
+{
+    const coloredCircle = coloredCircleBuilder();
+    coloredCircleConsumer(coloredCircle);
+    const shape = shapeBuilder();
+    // here we need a generic Shape, but more specific ColoredCircle is still a Shape
+    console.assert(shape.color === "black");
+    // this shape is a ColoredCircle
+    shapeConsumer(shape);
+}
+// parameter position type is contravariant
+const circleConsumer = (circle) => console.log({ circle });
+// @ts-expect-error: cannot pass supertype
+circleConsumer(new Shape());
+// can pass subtype
+circleConsumer(new ColoredCircle());
+// return position type is covariant
+const circleBuilder = () => new Circle();
+// we need a Shape and Circle is a more specific Shape, this is fine
+const shape = circleBuilder();
+// @ts-expect-error: we need a ColoredCircle but Circle is lacking some properties
+const coloredCircle = circleBuilder();
 //# sourceMappingURL=index.js.map
